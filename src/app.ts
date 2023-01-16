@@ -14,7 +14,7 @@ import {
 } from './core/constants/index.js';
 
 class App {
-  private readonly port: number;
+  public readonly port: number;
   private server: HttpServer;
 
   constructor(port: number) {
@@ -24,9 +24,9 @@ class App {
     this.initializeControllers();
   }
 
-  public listen() {
+  public listen(runMessage: string) {
     this.server.listen(this.port, () => {
-      console.log(`App listening on the port ${this.port}`);
+      console.log(runMessage);
     });
   }
 

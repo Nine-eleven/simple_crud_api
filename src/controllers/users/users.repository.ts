@@ -54,7 +54,7 @@ export class UsersRepository extends EventEmitter {
     }
   }
 
-  async update(id: string, input: Partial<User>): Promise<User> {
+  async update(id: string, input: CreateUpdateUserDto): Promise<User> {
     if (cluster.isWorker) {
       const obj = { cmd: 'update', data: [id, input] };
       return this.requestMasterForData(obj);
@@ -78,3 +78,6 @@ export class UsersRepository extends EventEmitter {
     }
   }
 }
+
+const usersRepository = new UsersRepository();
+export { usersRepository };

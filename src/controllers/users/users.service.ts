@@ -1,6 +1,6 @@
 import { User } from './user.entity.js';
 import { NotFoundError } from '../../core/errors.js';
-import { UsersRepository } from './users.repository.js';
+import { usersRepository, UsersRepository } from './users.repository.js';
 import { HTTP_RESPONSE_MESSAGE } from '../../core/constants/index.js';
 import { CreateUpdateUserDto } from './dto/create-user.dto.js';
 
@@ -37,6 +37,6 @@ export class UsersService {
   }
 }
 
-const userService = new UsersService(new UsersRepository());
+const userService = new UsersService(usersRepository);
 
 export { userService };
