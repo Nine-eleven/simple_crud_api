@@ -13,7 +13,7 @@
     "start:dev": "npx nodemon",
     "build": "rimraf ./build && npx tsc",
     "start:prod": "npm run build && node build/main",
-    "start:multi": "npm run start isMulti=true",
+    "start:multi": "npm run start:prod isMulti=true",
     "lint": "npx eslint ./src",
     "format": "npx eslint ./src --fix"
   },
