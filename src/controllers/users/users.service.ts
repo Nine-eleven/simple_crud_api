@@ -18,16 +18,16 @@ export class UsersService {
   }
 
   async findAll() {
-    return this.usersRepository.find();
+    return await this.usersRepository.find();
   }
 
   async create(input: CreateUpdateUserDto) {
-    return this.usersRepository.create(input);
+    return await this.usersRepository.create(input);
   }
 
   async update(id: string, input: CreateUpdateUserDto) {
     await this.findOne(id);
-    const result = this.usersRepository.update(id, input);
+    const result = await this.usersRepository.update(id, input);
     return result;
   }
 

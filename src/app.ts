@@ -40,8 +40,7 @@ class App {
 
         const body = await getRequestData(req);
         const parts = req.url.split('/');
-        const [basePath, controllerPath, param, ...restParts] = parts;
-
+        const [host, basePath, controllerPath, param, ...restParts] = parts;
         if (
           basePath !== BASE_URL_PATH ||
           !Object.values(CONTROLLER).some(
@@ -49,6 +48,14 @@ class App {
           ) ||
           !!restParts.length
         ) {
+          res.writeHead(HTTP_RESPONSE_STATUS_CODE.NOT_FOUND);
+          res.end(
+            JSON.stringify({
+              code: HTTP_RESPONSE_STATUS_CODE.NOT_FOUND,
+              message: HTTP_RESPONSE_MESSAGE.RESOURCE_NOT_FOUND,
+            }),
+          );
+        } else {
           let result;
           let statusCode = 200;
 
@@ -65,17 +72,8 @@ class App {
           } else {
             return;
           }
-
           res.writeHead(statusCode);
           res.end(result ? JSON.stringify(result) : '');
-        } else {
-          res.writeHead(HTTP_RESPONSE_STATUS_CODE.NOT_FOUND);
-          res.end(
-            JSON.stringify({
-              code: HTTP_RESPONSE_STATUS_CODE.NOT_FOUND,
-              message: HTTP_RESPONSE_MESSAGE.RESOURCE_NOT_FOUND,
-            }),
-          );
         }
       },
     );

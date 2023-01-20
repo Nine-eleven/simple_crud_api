@@ -10,20 +10,19 @@ export class UsersRepository extends EventEmitter {
   private readonly users: User[] = [];
 
   private async requestMasterForData(obj: any): Promise<any> {
-    const result = process.send!(obj, () => {
-      this.once(obj.cmd, (msg) => {
-        return msg['data'];
+    return new Promise((resolve) => {
+      process.send!(obj, () => {
+        this.once(obj.cmd, (msg) => {
+          resolve(msg['data']);
+        });
       });
     });
-    if (!result) {
-      throw new Error(HTTP_RESPONSE_MESSAGE.UNEXPECTED_ERROR);
-    }
   }
 
   async find(): Promise<User[]> {
     if (cluster.isWorker) {
       const obj = { cmd: 'find', data: [] };
-      return this.requestMasterForData(obj);
+      return await this.requestMasterForData(obj);
     } else {
       return this.users;
     }
@@ -32,7 +31,7 @@ export class UsersRepository extends EventEmitter {
   async findOne(id: string): Promise<User> {
     if (cluster.isWorker) {
       const obj = { cmd: 'findOne', data: [id] };
-      return this.requestMasterForData(obj);
+      return await this.requestMasterForData(obj);
     } else {
       return this.users.filter((item) => item.id === id)[0];
     }
@@ -41,7 +40,8 @@ export class UsersRepository extends EventEmitter {
   async create(input: CreateUpdateUserDto): Promise<User> {
     if (cluster.isWorker) {
       const obj = { cmd: 'create', data: [input] };
-      return this.requestMasterForData(obj);
+      const result = await this.requestMasterForData(obj);
+      return result;
     } else {
       const user = new User({
         id: uuid.v4(),
@@ -57,7 +57,7 @@ export class UsersRepository extends EventEmitter {
   async update(id: string, input: CreateUpdateUserDto): Promise<User> {
     if (cluster.isWorker) {
       const obj = { cmd: 'update', data: [id, input] };
-      return this.requestMasterForData(obj);
+      return await this.requestMasterForData(obj);
     } else {
       const user = Object.assign(await this.findOne(id), input);
       return user;
@@ -67,7 +67,7 @@ export class UsersRepository extends EventEmitter {
   async remove(id: string) {
     if (cluster.isWorker) {
       const obj = { cmd: 'remove', data: [id] };
-      return this.requestMasterForData(obj);
+      return await this.requestMasterForData(obj);
     } else {
       const index = this.users.findIndex((item) => item.id === id);
       if (index !== -1) {
